@@ -107,7 +107,7 @@ class Grid:
 
         if not pos:
             return False
-        
+
         row,col = pos
 
         for i in li:
@@ -129,7 +129,7 @@ class Grid:
 
         if not pos:
             return False
-        
+
         row,col = pos
 
         for i in li:
@@ -282,6 +282,16 @@ def redraw_window(win, board, time, strikes):
     # Draw Strikes
     text = fnt.render("X " * strikes, 1, (255, 0, 0))
     win.blit(text, (20, 560))
+
+    color_dark = (100,100,100)
+    pygame.draw.rect(win, color_dark, [590, 215, 80 , 30])
+    pygame.draw.rect(win, color_dark, [590, 265, 80 , 30])
+    smallfont = pygame.font.SysFont('comicsans',16)
+    color_light = (255, 255, 255)
+    text = smallfont.render('RESET' , True , color_light)
+    win.blit(text , (605 , 220))
+    text = smallfont.render('SOLVE' , True , color_light)
+    win.blit(text , (605 , 270))
     # Draw grid and board
     board.draw()
 
@@ -296,7 +306,7 @@ def format_time(secs):
 
 
 def main():
-    win = pygame.display.set_mode((600,600))
+    win = pygame.display.set_mode((700,650))
     pygame.display.set_caption("Sudoku (Press Space to auto solve) ")
     board = Grid(9, 9, 540, 540, win)
     key = None
@@ -306,17 +316,26 @@ def main():
     while run:
 
         play_time = round(time.time() - start)
-    
+
         for event in pygame.event.get():
-            
+
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_SPACE:
+            #         board.solve_gui()
+            mouse = pygame.mouse.get_pos()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if (590 <= mouse[0] <= 670) and (265 <= mouse[1] <= 295):
                     board.solve_gui()
+                if (590 <= mouse[0] <= 670) and (215 <= mouse[1] <= 245):
+                    board = Grid(9, 9, 540, 540, win)
+                    # play_time = 0
+                    redraw_window(win, board, play_time, strikes)
+
         if board.selected and key != None:
             board.sketch(key)
-            
+
         redraw_window(win, board, play_time, strikes)
         pygame.display.update()
 
